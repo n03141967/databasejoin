@@ -48,6 +48,7 @@
 				<option value="dropdown">PLG_ELEMENT_DBJOIN_DROPDOWN_LIST</option>
 				<option value="radio">PLG_ELEMENT_DBJOIN_RADIOBUTTONS</option>
 				<option value="auto-complete">PLG_ELEMENT_DBJOIN_AUTO_COMPLETE</option>
+				<option value="multiselect-auto-complete">Multiselect AutoComplete</option>
 				<option value="checkbox">PLG_ELEMENT_DBJOIN_CHECKBOX</option>
 				<option value="multilist">PLG_ELEMENT_DBJOIN_MULTILIST</option>
 			</field>

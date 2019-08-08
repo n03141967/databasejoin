@@ -31,6 +31,8 @@ class PlgFabrik_ElementDatabasejoin extends PlgFabrik_ElementList
 	 */
 	protected $cn = null;
 
+	protected $i = 0;
+
 	protected $joinDb = null;
 
 	/**
@@ -1412,6 +1414,9 @@ class PlgFabrik_ElementDatabasejoin extends PlgFabrik_ElementList
 					case 'auto-complete':
 						$this->renderAutoComplete($data, $repeatCounter, $html, $default);
 						break;
+					case 'multiselect-auto-complete':
+						$this->renderMultiSelectAutoComplete($data, $repeatCounter, $html, $default);
+						break;
 				}
 
 				$displayData->control = implode("\n", $html);
@@ -1685,6 +1690,28 @@ class PlgFabrik_ElementDatabasejoin extends PlgFabrik_ElementList
 	 */
 	protected function renderAutoComplete($data, $repeatCounter, &$html, $default)
 	{
+		$html[] = '
+			<div class="tags-input">
+			</div>
+
+		';
+	}
+
+	/**
+	 * Render auto-complete in form
+	 *
+	 * @param   array $data          Form data
+	 * @param   int   $repeatCounter Repeat group counter
+	 * @param   array &$html         HTML to assign output to
+	 * @param   array $default       Default values
+	 *
+	 * @since   3.0.7
+	 *
+	 * @return  void
+	 */
+	protected function renderMultiSelectAutoComplete($data, $repeatCounter, &$html, $default)
+	{
+		
 		$formModel  = $this->getFormModel();
 		$thisElName = $this->getHTMLName($repeatCounter);
 		$params     = $this->getParams();
