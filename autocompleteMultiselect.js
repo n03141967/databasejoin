@@ -1,11 +1,12 @@
 define(['jquery'], function ($) {
     //Catch all elements with class, and apply function to ip
     [].forEach.call(document.getElementsByClassName('autocomplete-input'), function (el) {
+        console.log(el);
         let hiddenInput = document.createElement('input'),      //create the input to save the selected data
-            mainInput   = document.createElement('input'),      //create main input to select elements
-            dataList    = document.createElement('datalist'),
-            tags        = [];                                   // array to save the selected elements
-        
+            mainInput = document.createElement('input'),      //create main input to select elements
+            dataList = document.createElement('datalist'), //dropdown
+            tags = [];                                   // array to save the selected elements
+
         hiddenInput.setAttribute('type', 'hidden');
         hiddenInput.setAttribute('name', el.getAttribute('data-name'));
 
@@ -18,51 +19,51 @@ define(['jquery'], function ($) {
         //event listener to get elements and put in the array
         mainInput.addEventListener('input', function () {
 
-            //add tag on click 
-            var val  = mainInput.value;
-            var opts = dataList.childNodes;
-            for (var i = 0; i < opts.length; i++) {
-                if(tags.indexOf(val) > -1) 
-                    break;
-                if (opts[i].value === val) {
-                    // An item was selected from the list!
-                    // yourCallbackHere()
-                    alert(opts[i].value);
-                    addTag(opts[i].value);
-                    break;
+            var val = mainInput.value;
+            var found = false;
+            //Verifica se o elemento que ele clicou já está adicionado na lista de tags
+            tags.forEach(tag => {
+                if (tag.text == val) {
+                    found = true;
+                    return;
                 }
+            });
+
+            var opts = dataList.childNodes;
+            //Se não encontrou o elemento na lista então adiciona uma tag
+            if (!found) {
+                for (var i = 0; i < opts.length; i++) {
+                    if (opts[i].value === val) {
+                        addTag(opts[i].value);
+                        break;
+                    }
+                }
+            } else {
+                refreshTags();
             }
 
-            if(tags.indexOf(val) > -1) 
-                return;
-
             $.ajax({
-                url    : 'http://localhost/PITT/joomla/plugins/fabrik_element/databasejoin/search.php',
-                data   : { q: val},
-                success: function(data) {
-                    for (var i = 0; i < opts.length; i++) {
-                        if(data.results[0].text == opts[i].value || val == ' ' || val == '')
-                            return;
-                    }
-                    // Create a new <option> element.
-                    var option       = document.createElement('option');
-                        option.value = data.results[0].text;
-                    // attach the option to the datalist element
-                    console.log(option);
-                    dataList.appendChild(option);
-                    // console.log(data.results.text);
+                url: 'http://localhost/joomla395/plugins/fabrik_element/databasejoin/search.php',
+                data: { q: val },
+                success: function (data) {
+                    var opts = dataList.childNodes;
+                    data.results.forEach(result => {
+                        var bool = false;
+                        for (var i = 0; i < opts.length; i++) {
+                            if (result.text == opts[i].value || val == ' ' || val == '') {
+                                bool = true;
+                                return;
+                            }
+                        }
+                        if (!bool) {
+                            var option = document.createElement('option');
+                            option.value = result.text;
+                            dataList.appendChild(option);
+                        }
+                    });
                 },
                 dataType: "json"
             });
-            // let enteredTags = mainInput.value.split(',');
-            // if (enteredTags.length > 1) {
-            //     enteredTags.forEach(function (t) {
-            //         let filteredTag = filterTag(t);
-            //         if (filteredTag.length > 0)
-            //             addTag(filteredTag);
-            //     });
-            //     mainInput.value = '';
-            // }
         });
 
         //if keydown is backspace remove tag
@@ -79,10 +80,10 @@ define(['jquery'], function ($) {
 
         addTag('hello!');
 
-        function addTag (text) {
+        function addTag(text) {
 
             let tag = {
-                text   : text,
+                text: text,
                 container: document.createElement('div'),
                 content: document.createElement('span'),
                 closeButton: document.createElement('span')
@@ -95,14 +96,14 @@ define(['jquery'], function ($) {
 
             tag.content.textContent = tag.text;
             tag.closeButton.textContent = 'x';
-            
+
             tag.closeButton.addEventListener('click', function () {
                 removeTag(tags.indexOf(tag));
             });
-            
+
             tag.container.appendChild(tag.content);
             tag.container.appendChild(tag.closeButton);
-            
+
             tags.push(tag);
 
             el.insertBefore(tag.container, mainInput);
@@ -110,32 +111,31 @@ define(['jquery'], function ($) {
             refreshTags();
         }
 
-        function removeTag (index) {
+        function removeTag(index) {
             let tag = tags[index];
             tags.splice(index, 1);
             el.removeChild(tag.container);
             refreshTags();
         }
 
-        function refreshTags () {
+        function refreshTags() {
             mainInput.value = '';
         }
 
-        function filterTag (tag) {
+        function filterTag(tag) {
             return tag.replace(/[^\w -]/g, '').trim().replace(/\W+/g, '-');
         }
     });
     var cssId = 'myCss';  // you could encode the css path itself to generate id..
-    if (!document.getElementById(cssId))
-    {
+    if (!document.getElementById(cssId)) {
         var head = document.getElementsByTagName('head')[0];
         var link = document.createElement('link');
         fconsole(JSON.stringify(head));
         fconsole(link);
-        link.id    = cssId;
-        link.rel   = 'stylesheet';
-        link.type  = 'text/css';
-        link.href  = 'http://localhost/PITT/joomla/plugins/fabrik_element/databasejoin/tags.css';
+        link.id = cssId;
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://localhost/joomla395/plugins/fabrik_element/databasejoin/tags.css';
         link.media = 'all';
         head.appendChild(link);
     }
