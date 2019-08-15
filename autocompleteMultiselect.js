@@ -1,10 +1,10 @@
 define(['jquery'], function ($) {
     //Catch all elements with class, and apply function to ip
     [].forEach.call(document.getElementsByClassName('autocomplete-input'), function (el) {
-        let hiddenInput = document.createElement('input'),//create the input to save the selected data
-            mainInput = document.createElement('input'), //create main input to select elements
-            dataList = document.createElement('datalist'),
-            tags = []; // array to save the selected elements
+        let hiddenInput = document.createElement('input'),      //create the input to save the selected data
+            mainInput   = document.createElement('input'),      //create main input to select elements
+            dataList    = document.createElement('datalist'),
+            tags        = [];                                   // array to save the selected elements
         
         hiddenInput.setAttribute('type', 'hidden');
         hiddenInput.setAttribute('name', el.getAttribute('data-name'));
@@ -12,7 +12,6 @@ define(['jquery'], function ($) {
         mainInput.setAttribute('type', 'text');
         mainInput.setAttribute('list', 'data-list-test');
         mainInput.classList.add('main-input');
-        mainInput.classList.add('fabrikinput');
         dataList.classList.add('element-list');
         dataList.id = 'data-list-test';
 
@@ -20,7 +19,7 @@ define(['jquery'], function ($) {
         mainInput.addEventListener('input', function () {
 
             //add tag on click 
-            var val = mainInput.value;
+            var val  = mainInput.value;
             var opts = dataList.childNodes;
             for (var i = 0; i < opts.length; i++) {
                 if(tags.indexOf(val) > -1) 
@@ -38,11 +37,11 @@ define(['jquery'], function ($) {
                 return;
 
             $.ajax({
-                url: 'http://localhost/PITT/joomla/plugins/fabrik_element/databasejoin/search.php',
-                data: { q: val},
+                url    : 'http://localhost/PITT/joomla/plugins/fabrik_element/databasejoin/search.php',
+                data   : { q: val},
                 success: function(data) {
                     for (var i = 0; i < opts.length; i++) {
-                        if(data.results[0].text == opts[i].value || val == ' ')
+                        if(data.results[0].text == opts[i].value || val == ' ' || val == '')
                             return;
                     }
                     // Create a new <option> element.
@@ -81,24 +80,32 @@ define(['jquery'], function ($) {
         addTag('hello!');
 
         function addTag (text) {
+
             let tag = {
-                text: text,
-                element: document.createElement('span'),
+                text   : text,
+                container: document.createElement('div'),
+                content: document.createElement('span'),
+                closeButton: document.createElement('span')
             };
 
-            tag.element.classList.add('tag');
-            tag.element.textContent = tag.text;
+            tag.container.classList.add('tag-container');
+            tag.content.classList.add('tag-content');
+            tag.closeButton.classList.add('tag-close-button');
 
-            let closeBtn = document.createElement('span');
-            closeBtn.classList.add('close');
-            closeBtn.addEventListener('click', function () {
+
+            tag.content.textContent = tag.text;
+            tag.closeButton.textContent = 'x';
+            
+            tag.closeButton.addEventListener('click', function () {
                 removeTag(tags.indexOf(tag));
             });
-            tag.element.appendChild(closeBtn);
-
+            
+            tag.container.appendChild(tag.content);
+            tag.container.appendChild(tag.closeButton);
+            
             tags.push(tag);
 
-            el.insertBefore(tag.element, mainInput);
+            el.insertBefore(tag.container, mainInput);
 
             refreshTags();
         }
@@ -106,16 +113,12 @@ define(['jquery'], function ($) {
         function removeTag (index) {
             let tag = tags[index];
             tags.splice(index, 1);
-            el.removeChild(tag.element);
+            el.removeChild(tag.container);
             refreshTags();
         }
 
         function refreshTags () {
-            let tagsList = [];
-            tags.forEach(function (t) {
-                tagsList.push(t.text);
-            });
-            hiddenInput.value = tagsList.join(',');
+            mainInput.value = '';
         }
 
         function filterTag (tag) {
@@ -125,14 +128,14 @@ define(['jquery'], function ($) {
     var cssId = 'myCss';  // you could encode the css path itself to generate id..
     if (!document.getElementById(cssId))
     {
-        var head  = document.getElementsByTagName('head')[0];
-        var link  = document.createElement('link');
+        var head = document.getElementsByTagName('head')[0];
+        var link = document.createElement('link');
         fconsole(JSON.stringify(head));
         fconsole(link);
-        link.id   = cssId;
-        link.rel  = 'stylesheet';
-        link.type = 'text/css';
-        link.href = 'http://localhost/Joomla395/plugins/fabrik_element/databasejoin/tags.css';
+        link.id    = cssId;
+        link.rel   = 'stylesheet';
+        link.type  = 'text/css';
+        link.href  = 'http://localhost/PITT/joomla/plugins/fabrik_element/databasejoin/tags.css';
         link.media = 'all';
         head.appendChild(link);
     }

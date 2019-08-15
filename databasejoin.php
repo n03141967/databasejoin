@@ -1693,15 +1693,6 @@ class PlgFabrik_ElementDatabasejoin extends PlgFabrik_ElementList
 		$html[] = '
 			<div class="autocomplete-input">
 			</div>
-			<label for="favorite_team">Favorite Team:</label>
-<input type="text" name="team" id="favorite_team" list="team_list">
-<datalist id="team_list">
-  <option>Detroit Lions</option>
-  <option>Detroit Pistons</option>
-  <option>Detroit Red Wings</option>
-  <option>Detroit Tigers</option>
-  <!-- etc... -->
-</datalist>
 
 		';
 	}
